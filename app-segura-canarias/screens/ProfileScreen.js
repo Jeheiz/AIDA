@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, FlatList } from 'react-native';
+import { auth_ } from '../services/firebase';
 
 const ProfileScreen = () => {
   const [contact, setContact] = useState('');
@@ -9,6 +10,14 @@ const ProfileScreen = () => {
     if (contact.trim() !== '') {
       setContacts([...contacts, { id: Math.random().toString(), name: contact }]);
       setContact('');
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await auth_.signOut();
+    } catch (error) {
+      alert(error.message);
     }
   };
 
@@ -29,6 +38,9 @@ const ProfileScreen = () => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <Text style={styles.contactItem}>{item.name}</Text>}
       />
+      <View style={styles.signOutContainer}>
+        <Button title="Sign Out" onPress={handleSignOut} color="red" />
+      </View>
     </View>
   );
 };
@@ -62,6 +74,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
+  signOutContainer: {
+    marginTop: 20,
+  }
 });
 
 export default ProfileScreen;
